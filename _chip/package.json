@@ -1,0 +1,26 @@
+{
+  "name": "debian",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahlbomgunnar/debian.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahlbomgunnar/debian/issues"
+  },
+  "homepage": "https://github.com/ahlbomgunnar/debian#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "jsonfile": "^4.0.0",
+    "node-cmd": "^3.0.0",
+    "node-fetch": "^1.7.3",
+    "path": "^0.12.7"
+  }
+}
