@@ -32,7 +32,7 @@ function CHIP_CONTROLLER() {
     	var percentage = this.get_sensor_percent(data);
     	if(!err) {
     		var now = new Date();
-    		this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
+    		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
     		console.log('$ Module ' + module.position + ' - [ Value ] ', data);
     		if(percentage > 50) {
 		  		return callback(null, true);
