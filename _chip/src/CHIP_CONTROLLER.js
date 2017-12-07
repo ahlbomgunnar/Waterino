@@ -31,9 +31,14 @@ function CHIP_CONTROLLER() {
     module.sensor.read((err, data) => {
     	var percentage = this.get_sensor_percent(data);
     	if(!err) {
-    		var now = new Date();
+    		// var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
-    		console.log('$ Module  - [ Value ] | [ ' +  data + ' ]');
+    		
+    		if(!percentage) {
+    			console.log('$ Chip - [ No Value ] ');
+    		} else {
+    		    console.log('$ Chip - [ Value ] | [ ' +  data + ' ]');
+    		}
     		if(percentage != null || percentage != undefined) {
     			if(percentage > 50) {
 			  		return callback(null, true);
@@ -45,34 +50,35 @@ function CHIP_CONTROLLER() {
 			  }
     	} else {
     		callback(err);
-    		console.log('$ Module  - [ Error reading data ] \n', err);
+    		console.log('$ Chip - [ Error reading data ] \n', err);
     	}
     });
   }
 
   this.handle_modules = (modules, callback) => {
   	if(modules.length > 0) {
-  		console.log('$ Modules - [ Analyzing... ]')
+  		console.log('$ Run  - [ Iterating modules ]')
 	    modules.forEach((module, index) => {
 	    	this.analyze_module(module, (err, needs_watering) => {
+  				console.log('| Chip - [ Module ' + module.position + ' | ' + module.plant.name + ' ]')
 	    		if(!err && needs_watering) {
-	    			console.log('$ Module  - [ Needs watering ]');
-	   			  console.log('$ Module  - [ Pushing module to watering queue ]');
+	    			console.log('$ Chip - [ Needs watering ]');
+	   			    console.log('$ Chip - [ Pushing module to watering queue ]');
 	    			this.queue.add(function() {
-			    	  console.log('$ Queue   - [ Handling module ' + module.position + ' ]');
+			    	  console.log('$ Run  - [ Handling module ' + module.position + ' ]');
 			    	  module.motor.run(500);
 			      })
 	    		} else if(!err && !needs_watering) {
-	   			  console.log('$ Module  - [ Does NOT need watering ]');
+	   			  console.log('$ Chip - [ Does NOT need watering ]');
 	    		} else {
 	    			callback(err);
 	    		}
 	    	});
 	    })
-	   	console.log('$ Runtime - [ Modules analyzed ]')
+	   	console.log('$ Run  - [ All modules iterated ]')
 			console.log('')  	
 		} else {
-  		console.log('$ Runtime - [ No modules avaliable to analyze ]')
+  		console.log('$ Run  - [ No modules avaliable to analyze ]')
   	}
 		
 
@@ -81,42 +87,40 @@ function CHIP_CONTROLLER() {
 
 	this.run = () => {
 		console.log('')
-		console.log('$ Runtime - [ Loop start ]')
+		console.log('$ Run  - [ Loop start ]')
 		this.handle_modules(this._sys.modules, (err, success) => {
     	if(!err) {
     		if(!this.queue.queue.length) {
-    			console.log('$ Runtime - [ Nothing in queue - terminating loop ]')
+    			console.log('$ Run  - [ Nothing in queue - terminating loop ]')
     		} else {
-    			console.log('$ Runtime - [ Running queue ]')
+    			console.log('$ Run  - [ Running queue ]')
 					console.log('')
 					this.queue.add(function() {
-						console.log('$ Queue   - [ Queue complete ] ')
+						console.log('$ Run  - [ Queue complete ] ')
 					})
     			this.queue.run();
     		}
     		// this.update_api();
     	} else {
-    		console.log('$ Runtime - [ Module error ] \n', err)
+    		console.log('$ Run  - [ Module error ] \n', err)
     	}
 		});
 	};
 
 	this.start = () => {
-		console.log('$ Startup \n')
 		this.init_state((err, success) => {
 			if(!err) {
-				console.log('$ Startup - [ System data initialized ]')
 				this.init_cloud((err, success) => {
 					if(!err) {
 						this.init_modules((err, success) => {
 							if(!err) {
 								if(!this._sys.modules.length > 0) {
-									console.log('$ Startup - [ No modules were built ]')
+									console.log('$ Init - [ No modules were built ]')
 								} else {
-									console.log('$ Startup - [ Modules successfully built ]')
+									console.log('$ Init - [ Modules successfully built ]')
 								}
 								this.init_session();
-								console.log('$ Startup - [ Running loop ]')
+								console.log('$ Init - [ Proceeding to main functionality ]')
 								this.run();
 							} else {throw err} 
 						});
@@ -127,19 +131,19 @@ function CHIP_CONTROLLER() {
 	};
 
 	this.stop = () => {
-		console.log('$ Finalizing - [ Terminating runtime ]')
+		console.log('$ Stop - [ Terminating runtime ]')
 		clearInterval(this._sys.session);
 	};
 
 	this.init_modules = (callback) => {
 		this._api.plants.forEach((plant, position) => {
 			if(position >= 6) {
-				console.log('$ Init    - [ Module initialization failed - Unsupported amount of plants ]')
+				console.log('$ Init - [ Module initialization failed - Unsupported amount of plants ]')
 			} else {
-				console.log('$ Init    - [ Module initialized | ' + plant.name + ' at position ' + position + ' ]');
+				console.log('$ Init - [ Module ' + position + ' built | ' + plant.name + ' ]');
 				this._sys.modules[position] = new CHIP_MODULE(plant, (position), cmd);
-				console.log('| Motor   - [ Motor position: ' + this._sys.modules[position].motor.position + ' ]')
-				console.log('| Sensor  - [ Sensor position: ' + this._sys.modules[position].sensor.position + ' ]')
+				console.log('| M    - [ dPin ' + this._sys.modules[position].motor.position + ' ]')
+				console.log('| S    - [ aPin ' + this._sys.modules[position].sensor.position + ' ]')
 			}	
 		});
 		return callback(null, true);
@@ -148,8 +152,8 @@ function CHIP_CONTROLLER() {
 	this.init_session = () => {
 		this._sys.session = setInterval(() => {
 			this.run();
-		}, 60000);
-		console.log('$ Session - [ Runtime session created ]')
+		}, 10000);
+		console.log('$ Init - [ Runtime session created ]')
 	};
 
 	this.init_state = (callback) => {
@@ -221,13 +225,13 @@ function CHIP_CONTROLLER() {
 			}
 		}).then((res) => {
 			var status = this.handle_request_result(res);
-			console.log('$ Request - [ Server fetch status: ' + res.status + ' - ' + status + ' ]');
-			if(res.status !== 200) {
+			console.log('$ API  - [ ' + res.status + ' | ' + status + ' ]');
+			if(res.status != 200) {
 				this.file_read('/_API.json', (err, data) => {
 					if(!err) {
 						this._api = data;
-						console.log('$ Startup - [ Plant data initialized from local file ]');
-						console.log('$ Startup - [ Last update: ' + this._sys.last_update + ' ]');
+						console.log('$ Init - [ Initialized from FILE ]');
+						console.log('$ Sys  - [ Last update: ' + this._sys.last_update + ' ]');
 						return callback(null, true);
 					} else {
 						return callback(err);
@@ -239,7 +243,7 @@ function CHIP_CONTROLLER() {
 		}).then((data) => {
 			this.file_write('/_API.json', data, (err, success) => {
 				if(!err) {
-					console.log('$ Startup - [ Plant data initialized from cloud ]');
+					console.log('$ Init - [ Initialized from CLOUD ]');
 				  this._api = data; 
 				  return callback(null, true);
 				} else {
