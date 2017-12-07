@@ -18,6 +18,7 @@ function CHIP_CONTROLLER() {
   this._sys = null;
   this.queue = new CHIP_QUEUE(5000);
 
+  /*
   this.get_sensor_percent = (a) => {
   	var x = a / this._sys.sensor_max;
   	if(x <= 100) {
@@ -26,10 +27,12 @@ function CHIP_CONTROLLER() {
   		return 100;
   	}
   }
+  */
 
   this.analyze_module = (module, callback) => {
     module.sensor.read((err, data) => {
-    	var percentage = this.get_sensor_percent(data);
+    	var percentage = data;
+    	// var percentage = this.get_sensor_percent(data);
     	if(!err) {
     		// var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
@@ -37,7 +40,7 @@ function CHIP_CONTROLLER() {
     		if(!percentage) {
     			console.log('$ Chip - [ No Value ] ');
     		} else {
-    		    console.log('$ Chip - [ Sensor Value ] | [ ' +  data + ' ]');
+    		    console.log('$ Chip - [ Sensor Value ] | [ ' +  percentage + ' ]');
     		}
     		if(percentage != null || percentage != undefined) {
     			if(percentage > 50) {
