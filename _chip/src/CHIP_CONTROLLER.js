@@ -94,10 +94,10 @@ function CHIP_CONTROLLER() {
     			console.log('$ Run  - [ Nothing in queue - terminating loop ]')
     		} else {
     			console.log('$ Run  - [ Running queue ]')
-					console.log('')
-					this.queue.add(function() {
-						console.log('$ Run  - [ Queue complete ] ')
-					})
+				console.log('')
+				this.queue.add(function() {
+					console.log('$ Run  - [ Queue complete ] ')
+				})
     			this.queue.run();
     		}
     		// this.update_api();
