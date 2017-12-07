@@ -20,12 +20,12 @@ function CHIP_CONTROLLER() {
 
   
   this.get_sensor_percent = (a) => {
+  	// Get precentage of max value
   	var x = a / this._sys.sensor_max;
-  	if(x <= 100) {
-  		return x;
-  	} else {
-  		return 100;
-  	}
+  	// Define 0-100 range
+  	x = Math.round(x * 100);
+  	// Reverse percentage
+  	return (100 - x);
   }
   
 
