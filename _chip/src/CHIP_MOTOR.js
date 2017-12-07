@@ -6,12 +6,12 @@ function CHIP_MOTOR(position, cmd) {
 
 	this.run = (ms) => {
 
-		cmd.run('echo "m' + this.position + ':on" > /dev/ttyACM0');
-    	console.log('$ Motor ' + this.pin + ' - [ Running for ' + ms + 'ms ]')
+		cmd.run('echo "m' + this.pin + ':on" > /dev/ttyACM0');
+    	console.log('$ Motor ' + this.position + ' - [ Running for ' + ms + 'ms ]')
 
 		setTimeout(() => {
-			cmd.run('echo "m' + this.position + ':off" > /dev/ttyACM0');
-    		console.log('$ Motor ' + this.pin + ' - [ Finished running ]')
+			cmd.run('echo "m' + this.pin + ':off" > /dev/ttyACM0');
+    		console.log('$ Motor ' + this.position + ' - [ Finished running ]')
 		}, ms);
 		
 	}
