@@ -32,7 +32,7 @@ function CHIP_CONTROLLER() {
 
   this.analyze_module = (module, callback) => {
     module.sensor.read((err, data) => {
-    	if(!err) {
+    	if(!err && data) {
     		// var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
     		var percentage = this.get_sensor_percent(data);
