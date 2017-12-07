@@ -16,7 +16,8 @@ function CHIP_CONTROLLER() {
   
   this._api = null;
   this._sys = null;
-  this.queue = new CHIP_QUEUE(8000);
+  this.interval = 3000;
+  this.queue = new CHIP_QUEUE(this.interval);
 
   
   this.get_sensor_percent = (a) => {
@@ -31,19 +32,23 @@ function CHIP_CONTROLLER() {
 
   this.analyze_module = (module, callback) => {
     module.sensor.read((err, data) => {
-    	var percentage = this.get_sensor_percent(data);
     	if(!err) {
     		// var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
-    		
+    		var percentage = this.get_sensor_percent(data);
     		if(!percentage) {
-    			console.log('$ Chip - [ No Value ] ');
+    			console.log('$ Chip - [ ' + module.plant.name + ' ] | [ Error ] ');
     		} else {
-    		    console.log('$ Chip - [ Humidity ] | [ ' +  percentage + '% ]');
+    		    console.log('$ Chip - [ ' + module.plant.name + ' ] | [ ' +  percentage + '% Humidity ]');
     		}
     		if(percentage != null || percentage != undefined) {
     			if(percentage < 50) {
-			  		return callback(null, true);
+			  		console.log('$ Chip - [ Queueing module for watering ]');
+	    			this.queue.add(function() {
+			    	  console.log('$ Run  - [ Handling module ' + module.position + ' ]');
+			    	  module.motor.run(2000);
+			      	})
+			      	return callback(null, true)
 			  	} else {
 			  		return callback(null, false);
 			  	}
@@ -61,24 +66,15 @@ function CHIP_CONTROLLER() {
   	if(modules.length > 0) {
   		console.log('$ Run  - [ Iterating modules ]')
 	    modules.forEach((module, index) => {
-	    	this.analyze_module(module, (err, needs_watering) => {
-  				console.log('| Chip - [ Module ' + module.position + ' | ' + module.plant.name + ' ]')
-	    		if(!err && needs_watering) {
-	    			console.log('$ Chip - [ Needs watering ]');
-	   			    console.log('$ Chip - [ Pushing module to watering queue ]');
-	    			this.queue.add(function() {
-			    	  console.log('$ Run  - [ Handling module ' + module.position + ' ]');
-			    	  module.motor.run(1000);
-			      })
-	    		} else if(!err && !needs_watering) {
-	   			  console.log('$ Chip - [ Does NOT need watering ]');
+	    	this.analyze_module(module, (err, done) => {
+	    		if(done) {
+	    			return callback()
 	    		} else {
-	    			callback(err);
+	    			return callback(err);
 	    		}
 	    	});
 	    })
-	   	console.log('$ Run  - [ All modules iterated ]')
-			console.log('')  	
+	   	
 		} else {
   		console.log('$ Run  - [ No modules avaliable to analyze ]')
   	}
@@ -88,18 +84,17 @@ function CHIP_CONTROLLER() {
   };
 
 	this.run = () => {
-		console.log('')
-		console.log('$ Run  - [ Loop start ]')
+		console.log('\n$ Run  - [ Loop start ]')
 		this.handle_modules(this._sys.modules, (err, success) => {
+			console.log('$ Run  - [ All modules iterated ]')
     	if(!err) {
     		if(!this.queue.queue.length) {
-    			console.log('$ Run  - [ Nothing in queue - terminating loop ]')
+    			console.log('$ Run  - [ Nothing in queue - terminating loop ]');
     		} else {
-    			console.log('$ Run  - [ Running queue ]')
-				console.log('')
-				this.queue.add(function() {
-					console.log('$ Run  - [ Queue complete ] ')
-				})
+					this.queue.add(function() {
+						console.log('$ Run  - [ Queue complete ] ');
+					})
+    			console.log('$ Run  - [ Running queue ]');
     			this.queue.run();
     		}
     		// this.update_api();
@@ -152,10 +147,17 @@ function CHIP_CONTROLLER() {
 	};
 
 	this.init_session = () => {
+
+		var interval
+		if(this._sys.modules.length) {
+			interval = this.interval * this._sys.modules.length + 1000;
+		} else {
+			interval = this.interval + 1000;
+		}
 		this._sys.session = setInterval(() => {
 			this.run();
-		}, 30000);
-		console.log('$ Init - [ Runtime session created ]')
+		}, interval);
+		console.log('$ Init - [ Session interval length: ' + interval + 'ms ]')
 	};
 
 	this.init_state = (callback) => {
