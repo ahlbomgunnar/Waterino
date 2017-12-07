@@ -45,7 +45,7 @@ void loop(void) {
             digitalWrite(M3, HIGH);
             break;
           default:
-            Serial.println("Not a valid position");
+            Serial.println(action);
             break;
         }
       }
@@ -63,7 +63,7 @@ void loop(void) {
             digitalWrite(M3, LOW);
             break;
           default:
-            Serial.println("Not a valid position");
+            Serial.println(action);
             break;
         }
       } 
@@ -82,12 +82,12 @@ void loop(void) {
           Serial.println(analogRead(S3));
           break;
         default:
-          Serial.println("Invalid position");
+          Serial.println(action);
           break;
       }
     } 
     else {
-      Serial.println("Does not start with m or s"); 
+      Serial.println(action);
     }
 
   }
