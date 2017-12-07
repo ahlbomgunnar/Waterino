@@ -68,15 +68,17 @@ function CHIP_CONTROLLER() {
 	    modules.forEach((module, index) => {
 	    	this.analyze_module(module, (err, done) => {
 	    		if(done) {
+	    			console.log('$ Run  - [ All modules iterated ]')
 	    			return callback()
 	    		} else {
+	    			console.log('$ Run  - [ Module iteration failed ]')
 	    			return callback(err);
 	    		}
 	    	});
 	    })
 	   	
 		} else {
-  		console.log('$ Run  - [ No modules avaliable to analyze ]')
+  		console.log('$ Run  - [ No modules avalible for iteration ]')
   	}
 		
 
@@ -86,7 +88,6 @@ function CHIP_CONTROLLER() {
 	this.run = () => {
 		console.log('\n$ Run  - [ Loop start ]')
 		this.handle_modules(this._sys.modules, (err, success) => {
-			console.log('$ Run  - [ All modules iterated ]')
     	if(!err) {
     		if(!this.queue.queue.length) {
     			console.log('$ Run  - [ Nothing in queue - terminating loop ]');
