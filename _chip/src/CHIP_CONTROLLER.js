@@ -150,9 +150,9 @@ function CHIP_CONTROLLER() {
 
 		var interval
 		if(this._sys.modules.length) {
-			interval = this.interval * this._sys.modules.length + 1000;
+			interval = (this.interval * 2) * this._sys.modules.length + 2000;
 		} else {
-			interval = this.interval + 1000;
+			interval = (this.interval * 2) + 1000;
 		}
 		this._sys.session = setInterval(() => {
 			this.run();
