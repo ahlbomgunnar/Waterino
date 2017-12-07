@@ -33,15 +33,19 @@ function CHIP_CONTROLLER() {
     	if(!err) {
     		var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
-    		console.log('$ Module ' + module.position + ' - [ Value ] ', data);
-    		if(percentage > 50) {
-		  		return callback(null, true);
-		  	} else {
-		  		return callback(null, false);
-		  	}
+    		console.log('$ Module  - [ Value ] | [ ' +  data + ' ]');
+    		if(percentage != null || percentage != undefined) {
+    			if(percentage > 50) {
+			  		return callback(null, true);
+			  	} else {
+			  		return callback(null, false);
+			  	}
+			  } else {
+			  	return callback(err);
+			  }
     	} else {
     		callback(err);
-    		console.log('$ Module ' + module.position + ' - [ Error reading data ] \n', err);
+    		console.log('$ Module  - [ Error reading data ] \n', err);
     	}
     });
   }
@@ -56,7 +60,7 @@ function CHIP_CONTROLLER() {
 	   			  console.log('$ Module  - [ Pushing module to watering queue ]');
 	    			this.queue.add(function() {
 			    	  console.log('$ Queue   - [ Handling module ' + module.position + ' ]');
-			    	  this.module.motor.run(1000);
+			    	  module.motor.run(500);
 			      })
 	    		} else if(!err && !needs_watering) {
 	   			  console.log('$ Module  - [ Does NOT need watering ]');
