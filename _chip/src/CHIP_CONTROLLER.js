@@ -16,9 +16,9 @@ function CHIP_CONTROLLER() {
   
   this._api = null;
   this._sys = null;
-  this.queue = new CHIP_QUEUE(5000);
+  this.queue = new CHIP_QUEUE(8000);
 
-  /*
+  
   this.get_sensor_percent = (a) => {
   	var x = a / this._sys.sensor_max;
   	if(x <= 100) {
@@ -27,12 +27,11 @@ function CHIP_CONTROLLER() {
   		return 100;
   	}
   }
-  */
+  
 
   this.analyze_module = (module, callback) => {
     module.sensor.read((err, data) => {
-    	var percentage = data;
-    	// var percentage = this.get_sensor_percent(data);
+    	var percentage = this.get_sensor_percent(data);
     	if(!err) {
     		// var now = new Date();
     		// this._api.plants[module.position].humidity_measurements.push({value:percentage, date:now.format('m-d-Y h:i:s'), timestamp:now.getTime()});
@@ -40,10 +39,10 @@ function CHIP_CONTROLLER() {
     		if(!percentage) {
     			console.log('$ Chip - [ No Value ] ');
     		} else {
-    		    console.log('$ Chip - [ Sensor Value ] | [ ' +  percentage + ' ]');
+    		    console.log('$ Chip - [ Humidity ] | [ ' +  percentage + '% ]');
     		}
     		if(percentage != null || percentage != undefined) {
-    			if(percentage > 50) {
+    			if(percentage < 50) {
 			  		return callback(null, true);
 			  	} else {
 			  		return callback(null, false);
@@ -155,7 +154,7 @@ function CHIP_CONTROLLER() {
 	this.init_session = () => {
 		this._sys.session = setInterval(() => {
 			this.run();
-		}, 20000);
+		}, 30000);
 		console.log('$ Init - [ Runtime session created ]')
 	};
 
