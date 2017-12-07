@@ -37,7 +37,7 @@ function CHIP_CONTROLLER() {
     		if(!percentage) {
     			console.log('$ Chip - [ No Value ] ');
     		} else {
-    		    console.log('$ Chip - [ Value ] | [ ' +  data + ' ]');
+    		    console.log('$ Chip - [ Sensor Value ] | [ ' +  data + ' ]');
     		}
     		if(percentage != null || percentage != undefined) {
     			if(percentage > 50) {
@@ -66,7 +66,7 @@ function CHIP_CONTROLLER() {
 	   			    console.log('$ Chip - [ Pushing module to watering queue ]');
 	    			this.queue.add(function() {
 			    	  console.log('$ Run  - [ Handling module ' + module.position + ' ]');
-			    	  module.motor.run(500);
+			    	  module.motor.run(1000);
 			      })
 	    		} else if(!err && !needs_watering) {
 	   			  console.log('$ Chip - [ Does NOT need watering ]');
@@ -152,7 +152,7 @@ function CHIP_CONTROLLER() {
 	this.init_session = () => {
 		this._sys.session = setInterval(() => {
 			this.run();
-		}, 10000);
+		}, 20000);
 		console.log('$ Init - [ Runtime session created ]')
 	};
 

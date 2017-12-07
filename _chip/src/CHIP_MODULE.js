@@ -9,7 +9,7 @@ function CHIP_MODULE(plant, position, cmd) {
 	this.plant    = plant;
 	this.position = position;
 	this.motor    = new CHIP_MOTOR(this.position, cmd);
-    this.sensor   = new CHIP_SENSOR((this.position), cmd);
+    this.sensor   = new CHIP_SENSOR(this.position, cmd);
 }
 
 
