@@ -76,7 +76,7 @@ function CHIP_CONTROLLER() {
 				if(done && !err) {
 					if(this.queue.store.length) {this.queue.run();};
 					this.update_cloud(this._api);
-					console.log('$ [ Run ] - Complete');
+					console.log('$ Queue - Lenght: ' + this.queue.store.length);
 				} else throw err;
 			});
 		};
@@ -106,10 +106,9 @@ function CHIP_CONTROLLER() {
 							});
 					  } else throw err;
 					});
-				}	else throw err;
+				} else throw err;
 			});
-		}
-		
+		};
 	};
 
 	this.stop = () => {
