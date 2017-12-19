@@ -11,11 +11,11 @@ function CHIP_SENSOR(position, cmd) {
 
 	this.read = (callback) => {
 		cmd.run("echo 's" + this.position + ":read' > /dev/ttyACM0");
-		cmd.get("head -n 1 /dev/ttyACM0", (err, data, srderr) => {
+		cmd.get("head -1 < /dev/ttyACM0", (err, data, srderr) => {
 			if(!err && data != null && data != undefined) return callback(null, data);
 			else if(err) return callback(err);
 			else return callback(srderr);
-		}, 750);
+		});
 	};
 };
 
