@@ -55,8 +55,8 @@ function CHIP_MODULE(plant, position, cmd) {
 
   	console.log('~ -------------- ');
   	console.log('~ Water|Module - ' + this.plant.name);
-  	console.log('~ HydroMeasure - ' + i);
-  	console.log('~ NeedsWaterAt - ' + h);
+  	console.log('~ HydroMeasure - ' + i + '%');
+  	console.log('~ NeedsWaterAt - ' + h + '%');
   	console.log('~ -------------- ');
   	console.log('~ NeedWatering - ' + (i < h));
   	
@@ -67,8 +67,9 @@ function CHIP_MODULE(plant, position, cmd) {
   }
 
   this.handle = (_api, _sys, queue, callback) => {
-    this.sensor.test((err, value) => {
+    this.sensor.read((err, value) => {
 	    if(value) {
+        console.log('@ Data - ' + value);
 	    	value = this.get_sensor_percent(_sys.sensor_max, value);
 	    	value ? this.write_measurement(_api, value) : callback(err);
 	    	this.process_value(value, this.plant.settings, (err, motor_runtime) => {

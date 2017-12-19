@@ -33,7 +33,8 @@ function CHIP_CONTROLLER() {
 	    module.handle(this._api, this._sys, this.queue, (err, motor_runtime) => {
 	    	if(!err) {
 	    		if(motor_runtime > 0) {
-	    			this.queue.add(() => module.motor.test(motor_runtime));
+	    			console.log('$ Modl - Pushing motor runtime to queue');
+	    			this.queue.add(() => module.motor.run(motor_runtime));
 	    		}
 	    		if((index + 1) == this._sys.modules.length) {
 	    			return callback(null, true);
@@ -69,12 +70,13 @@ function CHIP_CONTROLLER() {
 	
 		*/
 	
-		console.log('\n$ [ Run ] ');
+		console.log('\n$ [ Run ] - Start');
 		if(this._sys.modules.length > 0) {
 		  this.handle_modules(this._sys.modules, (err, done) => {
 				if(done && !err) {
 					if(this.queue.store.length) {this.queue.run();};
 					this.update_cloud(this._api);
+					console.log('$ [ Run ] - Complete');
 				} else throw err;
 			});
 		};
