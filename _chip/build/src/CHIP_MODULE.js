@@ -67,7 +67,8 @@ function CHIP_MODULE(plant, position, cmd) {
   }
 
   this.handle = (_api, _sys, queue, callback) => {
-    this.sensor.test((err, value) => {
+    // this.sensor.test((err, value) => {
+    this.sensor.run((err, value) => {
 	    if(value) {
 	    	value = this.get_sensor_percent(_sys.sensor_max, value);
 	    	value ? this.write_measurement(_api, value) : callback(err);

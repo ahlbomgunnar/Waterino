@@ -33,7 +33,8 @@ function CHIP_CONTROLLER() {
 	    module.handle(this._api, this._sys, this.queue, (err, motor_runtime) => {
 	    	if(!err) {
 	    		if(motor_runtime > 0) {
-	    			this.queue.add(() => module.motor.test(motor_runtime));
+	    			// this.queue.add(() => module.motor.test(motor_runtime));
+	    			this.queue.add(() => module.motor.run(motor_runtime));
 	    		}
 	    		if((index + 1) == this._sys.modules.length) {
 	    			return callback(null, true);
