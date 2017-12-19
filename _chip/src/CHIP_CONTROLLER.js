@@ -63,7 +63,7 @@ function CHIP_CONTROLLER() {
 		this.api_status((err, update) => {
 			if(update != null && update != undefined) {
 				if(update) console.log('Update avaliable');
-				// return this.restart();
+				// return this.restart(update);
 				else console.log('No update avaliable');
 			};
 		});
@@ -82,23 +82,33 @@ function CHIP_CONTROLLER() {
 		};
 	};
 
-	this.start = () => {
-		var date = new Date();
-		this.init_state((err, done) => {
-			if(done && !err) {
-				this.init_cloud(date, (err, done) => {
-					if(done && !err) {
-						this.init_modules((err, done) => {
-							if(done && !err) {
-								console.log('$ Init - Modules successfully built');
-								this.init_session();
-								this.run();
-							} else throw err;
-						});
-				  } else throw err;
-				});
-			}	else throw err;
-		});
+	this.start = (data) => {
+		if(data) {
+			this.init_modules((err, done) => {
+				if(done && !err) {
+					console.log('$ Init - Modules successfully built');
+					this.init_session();
+					this.run();
+				} else throw err;
+			});
+		} else {
+			this.init_state((err, done) => {
+				if(done && !err) {
+					this.init_cloud(date, (err, done) => {
+						if(done && !err) {
+							this.init_modules((err, done) => {
+								if(done && !err) {
+									console.log('$ Init - Modules successfully built');
+									this.init_session();
+									this.run();
+								} else throw err;
+							});
+					  } else throw err;
+					});
+				}	else throw err;
+			});
+		}
+		
 	};
 
 	this.stop = () => {
