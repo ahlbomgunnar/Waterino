@@ -83,6 +83,7 @@ function CHIP_CONTROLLER() {
 	};
 
 	this.start = (data) => {
+		var date = new Date();
 		if(data) {
 			this.init_modules((err, done) => {
 				if(done && !err) {
